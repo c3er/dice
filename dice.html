@@ -4,14 +4,80 @@
         <meta charset="UTF-8" />
         <title>Dice Substitution</title>
         <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                [...document.getElementsByClassName("die-label")].forEach(element => {
-                    element.textContent = Math.floor(Math.random() * 6) + 1
+            let _dieCount = 3
+            let _minDieValue = 1
+            let _maxDieValue = 6
+
+            function unfocusButton(id) {
+                if (id) {
+                    document.getElementById(id).blur()
+                }
+            }
+
+            function throwDice(id) {
+                [...document.getElementsByClassName("die")].forEach(element => {
+                    element.textContent = Math.floor(Math.random() * Math.abs(_minDieValue - _maxDieValue - 1)) + _minDieValue
                 })
+                unfocusButton(id)
+            }
+
+            function resetDice(count) {
+                const diceContainer = document.getElementById("dice-container")
+                diceContainer.innerHTML = ""
+                for (let i = 0; i < count; i++) {
+                    const dieElement = document.createElement("span")
+                    dieElement.setAttribute("class", "die")
+                    dieElement.textContent = "X"
+                    diceContainer.appendChild(dieElement)
+                }
+            }
+
+            function changeDieCount(count, id) {
+                _dieCount += count
+                
+                document.getElementById("die-count-label").textContent = _dieCount
+                document.getElementById("decrease-die-count-button").disabled = _dieCount <= 1
+
+                resetDice(_dieCount)
+                unfocusButton(id)
+            }
+
+            function followUpDieRangeChange(valueLabelId, value, buttonId) {
+                document.getElementById(valueLabelId).textContent = value
+                resetDice(_dieCount)
+                unfocusButton(buttonId)
+            }
+
+            function changeMinDieValue(amount, id) {
+                _minDieValue += amount
+                followUpDieRangeChange("min-value-label", _minDieValue, id)
+            }
+
+            function changeMaxDieValue(amount, id) {
+                _maxDieValue += amount
+                followUpDieRangeChange("max-value-label", _maxDieValue, id)
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                changeDieCount(0)
+                followUpDieRangeChange("min-value-label", _minDieValue)
+                followUpDieRangeChange("max-value-label", _maxDieValue)
+
+                document.body.onkeypress = event => {
+                    if (event.key === " ") {
+                        event.preventDefault()
+                        throwDice()
+                    }
+                }
             })
         </script>
         <style>
-            .die-label {
+            #throw-dice-button {
+                font-size: 15pt;
+                font-weight: bold;
+            }
+
+            .die {
                 background-color: lightgray;
                 border-style: solid;
                 display: inline-block;
@@ -20,13 +86,47 @@
                 margin: 5px;
                 padding: 10px;
             }
+
+            #die-count,
+            #die-range {
+                margin-top: 20px;
+            }
         </style>
     </head>
     <body>
-        <div id="dice-container">
-            <span class="die-label"></span>
-            <span class="die-label"></span>
-            <span class="die-label"></span>
+        <button id="throw-dice-button" onclick="throwDice(this.id)">Throw dice</button>
+        <div id="dice-container"></div>
+        <div id="die-count">
+            <span>Count of dice:</span>
+            <span>
+                <button id="inrease-die-count-button" onclick="changeDieCount(1, this.id)">+</button>
+            </span>
+            <span>
+                <button id="decrease-die-count-button" onclick="changeDieCount(-1, this.id)">-</button>
+            </span>
+            <span id="die-count-label"></span>
+        </div>
+        <div id="die-range">
+            <div>
+                <span>Minimum die value:</span>
+                <span>
+                    <button id="increase-min-value-button" onclick="changeMinDieValue(1, this.id)">+</button>
+                </span>
+                <span>
+                    <button id="decrease-min-value-button" onclick="changeMinDieValue(-1, this.id)">-</button>
+                </span>
+                <span id="min-value-label"></span>
+            </div>
+            <div>
+                <span>Maximum die value:</span>
+                <span>
+                    <button id="increase-max-value-button" onclick="changeMaxDieValue(1, this.id)">+</button>
+                </span>
+                <span>
+                    <button id="decrease-max-value-button" onclick="changeMaxDieValue(-1, this.id)">-</button>
+                </span>
+                <span id="max-value-label"></span>
+            </div>
         </div>
     </body>
 </html>
