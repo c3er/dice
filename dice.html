@@ -1,8 +1,21 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8" />
         <title>Dice Substitution</title>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                [...document.getElementsByClassName("die-label")].forEach(element => {
+                    element.textContent = Math.floor(Math.random() * 6) + 1
+                })
+            })
+        </script>
     </head>
     <body>
+        <div id="dice-container">
+            <div class="die-label"></div>
+            <div class="die-label"></div>
+            <div class="die-label"></div>
+        </div>
     </body>
 </html>
