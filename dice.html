@@ -4,9 +4,46 @@
         <meta charset="UTF-8" />
         <title>Dice Substitution</title>
         <script>
-            let _dieCount = 3
-            let _minDieValue = 1
-            let _maxDieValue = 6
+            class DieValues {
+                constructor() {
+                    this._defaultValues = {
+                        dieCount: 3,
+                        minDieValue: 1,
+                        maxDieValue: 6
+                    }
+                }
+
+                get dieCount() {
+                    return this._getDieValue("dieCount", this._defaultValues.dieCount)
+                }
+
+                set dieCount(value) {
+                    localStorage.setItem("dieCount", value)
+                }
+
+                get minDieValue() {
+                    return this._getDieValue("minDieValue", this._defaultValues.minDieValue)
+                }
+
+                set minDieValue(value) {
+                    localStorage.setItem("minDieValue", value)
+                }
+
+                get maxDieValue() {
+                    return this._getDieValue("maxDieValue", this._defaultValues.maxDieValue)
+                }
+
+                set maxDieValue(value) {
+                    localStorage.setItem("maxDieValue", value)
+                }
+
+                _getDieValue(valueName, defaultValue) {
+                    const value = parseInt(localStorage.getItem(valueName))
+                    return isNaN(value) ? defaultValue : value
+                }
+            }
+
+            const _dieValues = new DieValues()
 
             function unfocusButton(id) {
                 if (id) {
@@ -16,7 +53,9 @@
 
             function throwDice(id) {
                 [...document.getElementsByClassName("die")].forEach(element => {
-                    element.textContent = Math.floor(Math.random() * Math.abs(_minDieValue - _maxDieValue - 1)) + _minDieValue
+                    element.textContent = Math.floor(
+                        Math.random() *
+                        Math.abs(_dieValues.minDieValue - _dieValues.maxDieValue - 1)) + _dieValues.minDieValue
                 })
                 unfocusButton(id)
             }
@@ -33,35 +72,43 @@
             }
 
             function changeDieCount(count, id) {
-                _dieCount += count
+                _dieValues.dieCount += count
                 
-                document.getElementById("die-count-label").textContent = _dieCount
-                document.getElementById("decrease-die-count-button").disabled = _dieCount <= 1
+                document.getElementById("die-count-label").textContent = _dieValues.dieCount
+                document.getElementById("decrease-die-count-button").disabled = _dieValues.dieCount <= 1
 
-                resetDice(_dieCount)
+                resetDice(_dieValues.dieCount)
                 unfocusButton(id)
             }
 
             function followUpDieRangeChange(valueLabelId, value, buttonId) {
                 document.getElementById(valueLabelId).textContent = value
-                resetDice(_dieCount)
+                resetDice(_dieValues.dieCount)
                 unfocusButton(buttonId)
             }
 
             function changeMinDieValue(amount, id) {
-                _minDieValue += amount
-                followUpDieRangeChange("min-value-label", _minDieValue, id)
+                _dieValues.minDieValue += amount
+                followUpDieRangeChange("min-value-label", _dieValues.minDieValue, id)
             }
 
             function changeMaxDieValue(amount, id) {
-                _maxDieValue += amount
-                followUpDieRangeChange("max-value-label", _maxDieValue, id)
+                _dieValues.maxDieValue += amount
+                followUpDieRangeChange("max-value-label", _dieValues.maxDieValue, id)
+            }
+
+            function reset(shallClearLocalStorage, id) {
+                if (shallClearLocalStorage) {
+                    localStorage.clear()
+                }
+                changeDieCount(0)
+                followUpDieRangeChange("min-value-label", _dieValues.minDieValue)
+                followUpDieRangeChange("max-value-label", _dieValues.maxDieValue)
+                unfocusButton(id)
             }
 
             document.addEventListener("DOMContentLoaded", () => {
-                changeDieCount(0)
-                followUpDieRangeChange("min-value-label", _minDieValue)
-                followUpDieRangeChange("max-value-label", _maxDieValue)
+                reset(false)
 
                 document.body.onkeypress = event => {
                     if (event.key === " ") {
@@ -88,7 +135,8 @@
             }
 
             #die-count,
-            #die-range {
+            #die-range,
+            #reset-to-default-button {
                 margin-top: 20px;
             }
         </style>
@@ -128,5 +176,6 @@
                 <span id="max-value-label"></span>
             </div>
         </div>
+        <button id="reset-to-default-button" onclick="reset(true, this.id)">Reset to default</button>
     </body>
 </html>
