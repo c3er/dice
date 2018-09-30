@@ -52,7 +52,7 @@
             }
 
             function throwDice(id) {
-                [...document.getElementsByClassName("die")].forEach(element => {
+                [...document.getElementsByClassName("die-text")].forEach(element => {
                     element.textContent = Math.floor(
                         Math.random() *
                         Math.abs(_dieValues.minDieValue - _dieValues.maxDieValue - 1)) + _dieValues.minDieValue
@@ -66,7 +66,7 @@
                 for (let i = 0; i < count; i++) {
                     const dieElement = document.createElement("span")
                     dieElement.setAttribute("class", "die")
-                    dieElement.textContent = "X"
+                    dieElement.innerHTML = '<span class="die-text">X</span>'
                     diceContainer.appendChild(dieElement)
                 }
             }
@@ -130,8 +130,17 @@
                 display: inline-block;
                 font-size: 30pt;
                 font-weight: bold;
-                margin: 5px;
+                margin-bottom: 5px;
+                margin-right: 5px;
+                margin-top: 5px;
+                min-height: 40pt;
+                min-width: 40pt;
                 padding: 10px;
+                text-align: center;
+            }
+
+            .die-text {
+                vertical-align: middle;
             }
 
             #die-count,
