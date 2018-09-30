@@ -61,7 +61,7 @@
             }
 
             function resetDice(count) {
-                const diceContainer = document.getElementById("dice-container")
+                const diceContainer = document.getElementById("dice-area")
                 diceContainer.innerHTML = ""
                 for (let i = 0; i < count; i++) {
                     const dieElement = document.createElement("span")
@@ -143,7 +143,7 @@
     </head>
     <body>
         <button id="throw-dice-button" onclick="throwDice(this.id)">Throw dice</button>
-        <div id="dice-container"></div>
+        <div id="dice-area"></div>
         <div id="die-count">
             <span>Count of dice:</span>
             <span>
