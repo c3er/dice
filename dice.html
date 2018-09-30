@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <title>Dice Substitution</title>
         <script>
-            class DieValues {
+            class DiceSettings {
                 constructor() {
                     this._defaultValues = {
                         dieCount: 3,
@@ -43,7 +43,7 @@
                 }
             }
 
-            const _dieValues = new DieValues()
+            const _diceSettings = new DiceSettings()
 
             function unfocusButton(id) {
                 if (id) {
@@ -55,7 +55,7 @@
                 [...document.getElementsByClassName("die-text")].forEach(element => {
                     element.textContent = Math.floor(
                         Math.random() *
-                        Math.abs(_dieValues.minDieValue - _dieValues.maxDieValue - 1)) + _dieValues.minDieValue
+                        Math.abs(_diceSettings.minDieValue - _diceSettings.maxDieValue - 1)) + _diceSettings.minDieValue
                 })
                 unfocusButton(id)
             }
@@ -72,29 +72,29 @@
             }
 
             function changeDieCount(count, id) {
-                _dieValues.dieCount += count
+                _diceSettings.dieCount += count
                 
-                document.getElementById("die-count-label").textContent = _dieValues.dieCount
-                document.getElementById("decrease-die-count-button").disabled = _dieValues.dieCount <= 1
+                document.getElementById("die-count-label").textContent = _diceSettings.dieCount
+                document.getElementById("decrease-die-count-button").disabled = _diceSettings.dieCount <= 1
 
-                resetDice(_dieValues.dieCount)
+                resetDice(_diceSettings.dieCount)
                 unfocusButton(id)
             }
 
             function followUpDieRangeChange(valueLabelId, value, buttonId) {
                 document.getElementById(valueLabelId).textContent = value
-                resetDice(_dieValues.dieCount)
+                resetDice(_diceSettings.dieCount)
                 unfocusButton(buttonId)
             }
 
             function changeMinDieValue(amount, id) {
-                _dieValues.minDieValue += amount
-                followUpDieRangeChange("min-value-label", _dieValues.minDieValue, id)
+                _diceSettings.minDieValue += amount
+                followUpDieRangeChange("min-value-label", _diceSettings.minDieValue, id)
             }
 
             function changeMaxDieValue(amount, id) {
-                _dieValues.maxDieValue += amount
-                followUpDieRangeChange("max-value-label", _dieValues.maxDieValue, id)
+                _diceSettings.maxDieValue += amount
+                followUpDieRangeChange("max-value-label", _diceSettings.maxDieValue, id)
             }
 
             function reset(shallClearLocalStorage, id) {
@@ -102,8 +102,8 @@
                     localStorage.clear()
                 }
                 changeDieCount(0)
-                followUpDieRangeChange("min-value-label", _dieValues.minDieValue)
-                followUpDieRangeChange("max-value-label", _dieValues.maxDieValue)
+                followUpDieRangeChange("min-value-label", _diceSettings.minDieValue)
+                followUpDieRangeChange("max-value-label", _diceSettings.maxDieValue)
                 unfocusButton(id)
             }
 
