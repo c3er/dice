@@ -11,35 +11,59 @@
                         minDieValue: 1,
                         maxDieValue: 6
                     }
+
+                    this._fallBackValues = {}
+                    for (let key in this._defaultValues) {
+                        this._fallBackValues[key] = this._defaultValues[key]
+                    }
                 }
 
                 get dieCount() {
-                    return this._getDieValue("dieCount", this._defaultValues.dieCount)
+                    return this._getDieSetting("dieCount", this._defaultValues.dieCount)
                 }
 
                 set dieCount(value) {
-                    localStorage.setItem("dieCount", value)
+                    this._setDieSetting("dieCount", value)
                 }
 
                 get minDieValue() {
-                    return this._getDieValue("minDieValue", this._defaultValues.minDieValue)
+                    return this._getDieSetting("minDieValue", this._defaultValues.minDieValue)
                 }
 
                 set minDieValue(value) {
-                    localStorage.setItem("minDieValue", value)
+                    this._setDieSetting("minDieValue", value)
                 }
 
                 get maxDieValue() {
-                    return this._getDieValue("maxDieValue", this._defaultValues.maxDieValue)
+                    return this._getDieSetting("maxDieValue", this._defaultValues.maxDieValue)
                 }
 
                 set maxDieValue(value) {
-                    localStorage.setItem("maxDieValue", value)
+                    this._setDieSetting("maxDieValue", value)
                 }
 
-                _getDieValue(valueName, defaultValue) {
-                    const value = parseInt(localStorage.getItem(valueName))
+                _getDieSetting(valueName, defaultValue) {
+                    let value
+                    try {
+                        value = parseInt(localStorage.getItem(valueName))
+                    } catch (err) {
+                        if (!err instanceof DOMException && err.message.includes("localStorage")) {
+                            throw err
+                        }
+                        value = this._fallBackValues[valueName]
+                    }
                     return isNaN(value) ? defaultValue : value
+                }
+
+                _setDieSetting(valueName, value) {
+                    try {
+                        localStorage.setItem(valueName, value)
+                    } catch (err) {
+                        if (!err instanceof DOMException && err.message.includes("localStorage")) {
+                            throw err
+                        }
+                        this._fallBackValues[valueName] = value
+                    }
                 }
             }
 
