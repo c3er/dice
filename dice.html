@@ -51,12 +51,38 @@
                 }
             }
 
+            function currentDateString() {
+                const date = new Date()
+                return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`
+            }
+
+            function addToHistory(dieValues) {
+                document.getElementById("history-area").style.display = "inline"
+
+                const historyTable = document.getElementById("history-table")
+                const row = document.createElement("tr")
+                const diceString = dieValues
+                    .map(value => `<td class="die-table-cell">${value}</td>`)
+                    .join("")
+                row.innerHTML = `<td>${currentDateString()}</td>${diceString}`
+                historyTable.insertBefore(row, historyTable.firstChild)
+            }
+
             function throwDice(id) {
-                [...document.getElementsByClassName("die-text")].forEach(element => {
-                    element.textContent = Math.floor(
-                        Math.random() *
-                        Math.abs(_diceSettings.minDieValue - _diceSettings.maxDieValue - 1)) + _diceSettings.minDieValue
-                })
+                const dieValues = []
+                const dieElements = document.getElementsByClassName("die-text")
+
+                for (let i = 0; i < dieElements.length; i++) {
+                    const value =
+                        Math.floor(
+                            Math.random() *
+                            Math.abs(_diceSettings.minDieValue - _diceSettings.maxDieValue - 1)) +
+                        _diceSettings.minDieValue
+                    dieValues.push(value)
+                    dieElements[i].textContent = value
+                }
+
+                addToHistory(dieValues)
                 unfocusButton(id)
             }
 
@@ -69,6 +95,9 @@
                     dieElement.innerHTML = '<span class="die-text">X</span>'
                     diceContainer.appendChild(dieElement)
                 }
+                
+                document.getElementById("history-area").style.display = "none"
+                document.getElementById("history-table").innerHTML = ""
             }
 
             function changeDieCount(count, id) {
@@ -148,6 +177,17 @@
             #reset-to-default-button {
                 margin-top: 20px;
             }
+
+            #history-area {
+                display: none;
+            }
+
+            .die-table-cell {
+                border-style: solid;
+                border-width: 1px;
+                min-width: 15pt;
+                text-align: center;
+            }
         </style>
     </head>
     <body>
@@ -184,6 +224,10 @@
                 </span>
                 <span id="max-value-label"></span>
             </div>
+        </div>
+        <div id="history-area">
+            <h1>Session history</h1>
+            <table id="history-table"></table>
         </div>
         <button id="reset-to-default-button" onclick="reset(true, this.id)">Reset to default</button>
     </body>
